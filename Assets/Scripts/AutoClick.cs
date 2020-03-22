@@ -32,23 +32,61 @@ public class AutoClick : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
+
+    float _interval = 3f;
+    float _tick = 0;
+    bool _clickFirst = true;
+
 
     bool hasMouseDown;
     // Update is called once per frame
     void Update()
     {
-        if (!hasMouseDown)
+        //if (!hasMouseDown)
+        //{
+        //    if (Time.time > 5)
+        //    {
+        //        //模拟鼠标在一个按钮上点击，这个按钮会调用下面的CloseSelf()方法
+        //        SetCursorPos(10, 10);
+        //        mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
+        //        mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
+        //        hasMouseDown = true;
+        //    }
+        //}
+
+
+        //if (Time.time < 3)
+        //{
+
+        //}
+        //else
+        //{
+        _tick += Time.deltaTime;
+        if (_tick > _interval)
         {
-            if (Time.time > 5)
+            _tick = 0;
+
+            //点击第一个位子
+            if (_clickFirst)
             {
-                //模拟鼠标在一个按钮上点击，这个按钮会调用下面的CloseSelf()方法
-                SetCursorPos(10, 10);
-                mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
-                mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
-                hasMouseDown = true;
+                _clickFirst = false;
+                SetCursorPos(10, 20);
+                Debug.LogError("第一个");
             }
+            else
+            {
+                _clickFirst = true;
+                SetCursorPos(300, 20);
+                //mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
+                //mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
+                Debug.LogError("第二个");
+
+            }
+            mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
+            mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
         }
+        //}
     }
 }

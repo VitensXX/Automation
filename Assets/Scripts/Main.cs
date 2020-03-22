@@ -7,10 +7,10 @@ public class Main : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            OnCloseSelf();
-        }
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    OnCloseSelf();
+        //}
     }
 
     public void OnCloseSelf()
