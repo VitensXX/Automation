@@ -63,6 +63,8 @@ public class AutoClick : MonoBehaviour
         //}
         //else
         //{
+
+        return;
         _tick += Time.deltaTime;
         if (_tick > _interval)
         {
