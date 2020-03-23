@@ -29,42 +29,27 @@ public class AutoClick : MonoBehaviour
         Absolute = 0x8000
     }
 
+    public bool EnableAutoClick { get; set; }//是否启动自动点击
+
     // Start is called before the first frame update
     void Start()
     {
-
+        EnableAutoClick = false;
     }
 
     float _interval = 3f;
     float _tick = 0;
     bool _clickFirst = true;
 
-
     bool hasMouseDown;
     // Update is called once per frame
     void Update()
     {
-        //if (!hasMouseDown)
-        //{
-        //    if (Time.time > 5)
-        //    {
-        //        //模拟鼠标在一个按钮上点击，这个按钮会调用下面的CloseSelf()方法
-        //        SetCursorPos(10, 10);
-        //        mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
-        //        mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
-        //        hasMouseDown = true;
-        //    }
-        //}
+        if (!EnableAutoClick)
+        {
+            return;
+        }
 
-
-        //if (Time.time < 3)
-        //{
-
-        //}
-        //else
-        //{
-
-        return;
         _tick += Time.deltaTime;
         if (_tick > _interval)
         {
@@ -84,7 +69,6 @@ public class AutoClick : MonoBehaviour
                 //mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
                 //mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
                 Debug.LogError("第二个");
-
             }
             mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
             mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);

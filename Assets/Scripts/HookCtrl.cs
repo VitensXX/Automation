@@ -21,6 +21,15 @@ public class HookCtrl : MonoBehaviour
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr GetModuleHandle(string lpModuleName);
 
+    //ToAscii职能的转换指定的虚拟键码和键盘状态的相应字符或字符
+    [DllImport("user32")]
+    public static extern int ToAscii(int uVirtKey, //[in] 指定虚拟关键代码进行翻译。
+                                     int uScanCode, // [in] 指定的硬件扫描码的关键须翻译成英文。高阶位的这个值设定的关键，如果是（不压）
+                                     byte[] lpbKeyState, // [in] 指针，以256字节数组，包含当前键盘的状态。每个元素（字节）的数组包含状态的一个关键。如果高阶位的字节是一套，关键是下跌（按下）。在低比特，如果设置表明，关键是对切换。在此功能，只有肘位的CAPS LOCK键是相关的。在切换状态的NUM个锁和滚动锁定键被忽略。
+                                     byte[] lpwTransKey, // [out] 指针的缓冲区收到翻译字符或字符。
+                                     int fuState); // [in] Specifies whether a menu is active. This parameter must be 1 if a menu is active, or 0 otherwise.
+
+
 
     public delegate void HookOnKeyDownESC();//按键响应ESC操作
     public static HookOnKeyDownESC DoOnKeyDownESC;
@@ -31,7 +40,7 @@ public class HookCtrl : MonoBehaviour
     public delegate void HookOnKeyDownF10();//按键F10响应
     public static HookOnKeyDownF10 DoOnKeyDownF10;
 
-    public delegate void HookOnMouseLeftButtonDown();//鼠标左键响应
+    public delegate void HookOnMouseLeftButtonDown(Vector2 position);//鼠标左键响应
     public static HookOnMouseLeftButtonDown DoOnMouseLeftButtonDown;
 
 
@@ -49,26 +58,8 @@ public class HookCtrl : MonoBehaviour
     //WM_MOUSEMOVE 0x0200
     //WM_LBUTTONUP 0x0202
 
-
     int idHookKeyBoard;
     int idHookMouse;
-
-
-    public struct KeyMSG
-
-    {
-
-        public int vkCode;
-
-        public int scanCode;
-
-        public int flags;
-
-        public int time;
-
-        public int dwExtraInfo;
-
-    }
 
     //安装钩子
     private void StartHook()
@@ -90,7 +81,7 @@ public class HookCtrl : MonoBehaviour
             UnhookWindowsHookEx(idHookKeyBoard);
         }
 
-        if(idHookMouse > 0)
+        if (idHookMouse > 0)
         {
             Debug.Log("鼠标钩子[" + idHookMouse + "]安装成功");
         }
@@ -128,31 +119,25 @@ public class HookCtrl : MonoBehaviour
 
     private int KeyboardHook(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        Debug.LogError("KeyboardHook " + wParam + " "+lParam);
         try
         {
             //键盘按下响应
-            if (nCode >= 0 && wParam == (IntPtr)WH_KEYBOARD)
+            if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN))
             {
-                //KeyMSG m = (KeyMSG)Marshal.PtrToStructure(lParam, typeof(KeyMSG));
-
-                int vkCode = Marshal.ReadInt32(lParam);
+                int vkCode = Marshal.ReadInt32(lParam);//Unity的keyCode 与 win32的vkCode的值不一样
                 //ESC按键的响应
-                if ((KeyCode)vkCode == KeyCode.Escape)
+                if (vkCode == 27)//ESC
                 {
-                    Debug.LogError("ESC!!!!!!!!!!!" + lParam);
                     DoOnKeyDownESC?.Invoke();
                 }
                 //F9
-                else if ((KeyCode)vkCode == KeyCode.F9)
+                else if (vkCode == 120)//F9
                 {
-                    Debug.LogError("F9!!!!!!!!!!!");
                     DoOnKeyDownF9?.Invoke();
                 }
                 //F10
-                else if ((KeyCode)vkCode == KeyCode.F10)
+                else if (vkCode == 121)//F10
                 {
-                    Debug.LogError("F10!!!!!!!!!!!");
                     DoOnKeyDownF10?.Invoke();
                 }
             }
@@ -166,16 +151,32 @@ public class HookCtrl : MonoBehaviour
         }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public class POINT
+    {
+        public int x;
+        public int y;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public class MouseHookStruct
+    {
+        public POINT pt;
+        public int hwnd;
+        public int wHitTestCode;
+        public int dwExtraInfo;
+    }
+
     private int MouseHook(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        //Debug.LogError("MouseHook " + wParam + " " + lParam);
+
+        MouseHookStruct MyMouseHookStruct = (MouseHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseHookStruct));
         try
         {
             //鼠标左键点击
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
             {
-                Debug.LogError("MouseDown "+lParam);
-                DoOnMouseLeftButtonDown?.Invoke();
+                //Debug.LogError("MouseDown " + MyMouseHookStruct.pt.x +" "+MyMouseHookStruct.pt.y);
+                DoOnMouseLeftButtonDown?.Invoke(new Vector2(MyMouseHookStruct.pt.x, MyMouseHookStruct.pt.y));
             }
 
             return CallNextHookEx(idHookKeyBoard, nCode, wParam, lParam);

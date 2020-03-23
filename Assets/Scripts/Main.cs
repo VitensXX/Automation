@@ -46,7 +46,7 @@ public class Main : MonoBehaviour
         Debug.LogError("end record");
     }
 
-    void ListenMouseLeftButtonDown()
+    void ListenMouseLeftButtonDown(Vector2 position)
     {
         if (!_enableMouseListener)
             return;
