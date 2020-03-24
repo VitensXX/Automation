@@ -31,14 +31,8 @@ public class HookCtrl : MonoBehaviour
 
 
 
-    public delegate void HookOnKeyDownESC();//按键响应ESC操作
-    public static HookOnKeyDownESC DoOnKeyDownESC;
-
-    public delegate void HookOnKeyDownF9();//按键F9响应
-    public static HookOnKeyDownF9 DoOnKeyDownF9;
-
-    public delegate void HookOnKeyDownF10();//按键F10响应
-    public static HookOnKeyDownF10 DoOnKeyDownF10;
+    public delegate void HookOnKeyDown(int vkCode);//键盘按下监听
+    public static HookOnKeyDown DoOnKeyDown;
 
     public delegate void HookOnMouseLeftButtonDown(Vector2 position);//鼠标左键响应
     public static HookOnMouseLeftButtonDown DoOnMouseLeftButtonDown;
@@ -125,21 +119,7 @@ public class HookCtrl : MonoBehaviour
             if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN))
             {
                 int vkCode = Marshal.ReadInt32(lParam);//Unity的keyCode 与 win32的vkCode的值不一样
-                //ESC按键的响应
-                if (vkCode == 27)//ESC
-                {
-                    DoOnKeyDownESC?.Invoke();
-                }
-                //F9
-                else if (vkCode == 120)//F9
-                {
-                    DoOnKeyDownF9?.Invoke();
-                }
-                //F10
-                else if (vkCode == 121)//F10
-                {
-                    DoOnKeyDownF10?.Invoke();
-                }
+                DoOnKeyDown?.Invoke(vkCode);
             }
 
             return CallNextHookEx(idHookKeyBoard, nCode, wParam, lParam);

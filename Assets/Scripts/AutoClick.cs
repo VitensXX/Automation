@@ -31,6 +31,18 @@ public class AutoClick : MonoBehaviour
 
     public bool EnableAutoClick { get; set; }//是否启动自动点击
 
+
+    List<Vector2> _clickPositions = new List<Vector2>();
+    public void ResetPositions()
+    {
+        _clickPositions.Clear();
+    }
+
+    public void AddPosition(Vector2 pos)
+    {
+        _clickPositions.Add(pos);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,10 +54,11 @@ public class AutoClick : MonoBehaviour
     bool _clickFirst = true;
 
     bool hasMouseDown;
+    int _clickIndex = 0;
     // Update is called once per frame
     void Update()
     {
-        if (!EnableAutoClick)
+        if (!EnableAutoClick || _clickPositions.Count == 0)
         {
             return;
         }
@@ -55,21 +68,24 @@ public class AutoClick : MonoBehaviour
         {
             _tick = 0;
 
-            //点击第一个位子
-            if (_clickFirst)
-            {
-                _clickFirst = false;
-                SetCursorPos(10, 20);
-                Debug.LogError("第一个");
-            }
-            else
-            {
-                _clickFirst = true;
-                SetCursorPos(300, 20);
-                //mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
-                //mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
-                Debug.LogError("第二个");
-            }
+            Vector2 pos = _clickPositions[_clickIndex++ % _clickPositions.Count];
+            SetCursorPos(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+
+            ////点击第一个位子
+            //if (_clickFirst)
+            //{
+            //    _clickFirst = false;
+            //    SetCursorPos(10, 20);
+            //    Debug.LogError("第一个");
+            //}
+            //else
+            //{
+            //    _clickFirst = true;
+            //    SetCursorPos(300, 20);
+            //    //mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
+            //    //mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
+            //    Debug.LogError("第二个");
+            //}
             mouse_event(MouseEventFlag.LeftDown, 0, 0, 0, UIntPtr.Zero);
             mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
         }
