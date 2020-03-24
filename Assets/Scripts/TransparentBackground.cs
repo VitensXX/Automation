@@ -38,25 +38,25 @@ public class TransparentBackground : MonoBehaviour
     void Start()
     {
 #if !UNITY_EDITOR
-        var margins = new MARGINS() { cxLeftWidth = -1 };
+        //var margins = new MARGINS() { cxLeftWidth = -1 };
 
         // Get a handle to the window
-        var hwnd = GetActiveWindow();
+        //var hwnd = GetActiveWindow();
 
         // Set properties of the window
         // See: https://msdn.microsoft.com/en-us/library/windows/desktop/ms633591%28v=vs.85%29.aspx
-        SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+        //SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 
         // Extend the window into the client area
         //See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa969512%28v=vs.85%29.aspx 
-        DwmExtendFrameIntoClientArea(hwnd, ref margins);
+        //DwmExtendFrameIntoClientArea(hwnd, ref margins);
 #endif
     }
 
     // Pass the output of the camera to the custom material
     // for chroma replacement
-    void OnRenderImage(RenderTexture from, RenderTexture to)
-    {
-        Graphics.Blit(from, to, m_Material);
-    }
+    //void OnRenderImage(RenderTexture from, RenderTexture to)
+    //{
+    //    Graphics.Blit(from, to, m_Material);
+    //}
 }

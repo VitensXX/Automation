@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
-
+    public Text curState;
     private AutoClick _autoClick;
 
     private void OnEnable()
@@ -40,6 +41,16 @@ public class Main : MonoBehaviour
     void OnStartAutoClick()
     {
         _autoClick.EnableAutoClick = !_autoClick.EnableAutoClick;
+
+        if (_autoClick.EnableAutoClick)
+        {
+            curState.text = "自动点击中";
+        }
+        else
+        {
+            curState.text = "暂停自动点击";
+        }
+
         Debug.LogError("F8 start click state "+_autoClick.EnableAutoClick);
     }
 
@@ -53,6 +64,7 @@ public class Main : MonoBehaviour
             _autoClick.ResetPositions();
             _enableMouseListener = true;
         }
+        curState.text = "正在录制";
         Debug.LogError("start record");
     }
 
@@ -60,6 +72,7 @@ public class Main : MonoBehaviour
     void OnEndRecordClick()
     {
         _enableMouseListener = false;
+        curState.text = "录制完成";
         Debug.LogError("end record");
     }
 

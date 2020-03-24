@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AutoClick : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public class AutoClick : MonoBehaviour
     void Start()
     {
         EnableAutoClick = false;
+        showSeconds.text = _interval.ToString("0.0");
     }
 
     float _interval = 3f;
@@ -90,5 +92,23 @@ public class AutoClick : MonoBehaviour
             mouse_event(MouseEventFlag.LeftUp, 0, 0, 0, UIntPtr.Zero);
         }
         //}
+    }
+
+
+    public Text showSeconds;
+    public void AddSeconds()
+    {
+        _interval+=0.5f;
+        showSeconds.text = _interval.ToString("0.0");
+    }
+
+    public void SubSeconds()
+    {
+        _interval-=0.5f;
+        if (_interval <= 0)
+        {
+            _interval = 0.5f;
+        }
+        showSeconds.text = _interval.ToString("0.0");
     }
 }
